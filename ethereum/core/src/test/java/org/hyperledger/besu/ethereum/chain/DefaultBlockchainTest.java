@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Test;
 
 public class DefaultBlockchainTest {
 
+  // 初始化一个新的chain
   @Test
   public void initializeNew() {
     final BlockDataGenerator gen = new BlockDataGenerator();
@@ -58,12 +59,20 @@ public class DefaultBlockchainTest {
     final DefaultBlockchain blockchain =
         createMutableBlockchain(kvStore, kvStoreVariables, genesisBlock);
 
+    // 从chain中获取的block与这里的block一致
     assertBlockDataIsStored(blockchain, genesisBlock, Collections.emptyList());
+
+    // header中的hash与block中的hash一致
     assertBlockIsHead(blockchain, genesisBlock);
+
+    // 校验区块难度
     assertTotalDifficultiesAreConsistent(blockchain, genesisBlock);
+
+    // check forks chain
     assertThat(blockchain.getForks()).isEmpty();
   }
 
+  // 初始化一个已有数据的链
   @Test
   public void initializeExisting() {
     final BlockDataGenerator gen = new BlockDataGenerator();

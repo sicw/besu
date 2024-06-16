@@ -18,6 +18,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.core.Difficulty;
 
+/** 链头指的是最新生成的Block */
 /** Head of a blockchain. */
 public final class ChainHead {
 
