@@ -673,8 +673,10 @@ public class EVMExecutor {
     while (!messageFrameStack.isEmpty()) {
       final MessageFrame messageFrame = messageFrameStack.peek();
       if (messageFrame.getType() == MessageFrame.Type.CONTRACT_CREATION) {
+        // 创建合约调用
         ccp.process(messageFrame, tracer);
       } else if (messageFrame.getType() == MessageFrame.Type.MESSAGE_CALL) {
+        // 消息调用
         mcp.process(messageFrame, tracer);
       }
     }

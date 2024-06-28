@@ -65,6 +65,7 @@ public class PivotSelectorFromSafeBlock implements PivotBlockSelector {
     this.cleanupAction = cleanupAction;
   }
 
+  // 选择新的核心block
   @Override
   public Optional<FastSyncState> selectNewPivotBlock() {
     final Optional<ForkchoiceEvent> maybeForkchoice = forkchoiceStateSupplier.get();

@@ -25,13 +25,16 @@ public class EngineQosTimer implements EngineCallListener {
   static final long QOS_TIMEOUT_MILLIS = 120000L;
   private static final Logger LOG = LoggerFactory.getLogger(EngineQosTimer.class);
 
+  // 服务质量定时器
   private final QosTimer qosTimer;
 
   public EngineQosTimer(final Vertx vertx) {
+    // 120s定时执行
     qosTimer = new QosTimer(vertx, QOS_TIMEOUT_MILLIS, lastCall -> logTimeoutWarning());
     qosTimer.resetTimer();
   }
 
+  // 重置定时器，重新计数，不然会执行定时逻辑
   @Override
   public void executionEngineCalled() {
     getQosTimer().resetTimer();
@@ -43,6 +46,7 @@ public class EngineQosTimer implements EngineCallListener {
         QOS_TIMEOUT_MILLIS / 1000L);
   }
 
+  // 获取定时器
   @VisibleForTesting
   public QosTimer getQosTimer() {
     return qosTimer;

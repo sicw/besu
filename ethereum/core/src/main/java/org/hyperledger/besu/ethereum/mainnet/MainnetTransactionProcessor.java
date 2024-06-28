@@ -271,9 +271,12 @@ public class MainnetTransactionProcessor {
     try {
       final var transactionValidator = transactionValidatorFactory.get();
       LOG.trace("Starting execution of {}", transaction);
+
+      // 验证交易
       ValidationResult<TransactionInvalidReason> validationResult =
           transactionValidator.validate(
               transaction, blockHeader.getBaseFee(), transactionValidationParams);
+
       // Make sure the transaction is intrinsically valid before trying to
       // compare against a sender account (because the transaction may not
       // be signed correctly to extract the sender).
@@ -293,6 +296,7 @@ public class MainnetTransactionProcessor {
         return TransactionProcessingResult.invalid(validationResult);
       }
 
+      // nonce自增
       final long previousNonce = sender.incrementNonce();
       LOG.trace(
           "Incremented sender {} nonce ({} -> {})",
@@ -300,14 +304,20 @@ public class MainnetTransactionProcessor {
           previousNonce,
           sender.getNonce());
 
+      // gas单价 gasPrice = baseFee + priorityFee
       final Wei transactionGasPrice =
           feeMarket.getTransactionPriceCalculator().price(transaction, blockHeader.getBaseFee());
 
+      // blob 数据主要是和L2有关，用来存储标记Rollup的数据
       final long blobGas = gasCalculator.blobGasCost(transaction.getBlobCount());
 
+      // 预付gas费用
       final Wei upfrontGasCost =
           transaction.getUpfrontGasCost(transactionGasPrice, blobGasPrice, blobGas);
+
+      // 付款之前的余额
       final Wei previousBalance = sender.decrementBalance(upfrontGasCost);
+
       LOG.trace(
           "Deducted sender {} upfront gas cost {} ({} -> {})",
           senderAddress,
@@ -417,6 +427,7 @@ public class MainnetTransactionProcessor {
 
       if (initialFrame.getCode().isValid()) {
         while (!messageFrameStack.isEmpty()) {
+          // 循环执行code
           process(messageFrameStack.peekFirst(), operationTracer);
         }
       } else {
